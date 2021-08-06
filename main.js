@@ -6,7 +6,7 @@ const slideshow = require("./slideshow");
   var nsfw = true;
   //step 1, fetch images from reddit
   await fetchFromReddit
-    .fetchImagesFrom("MapleStory", limit, nsfw)
+    .fetchImagesFrom("Futanari", limit, nsfw)
 
     //step 2, turn the urls into image files
     .then((URLs) => urls2imgs.makeImagesFrom(URLs))
