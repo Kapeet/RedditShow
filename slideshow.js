@@ -29,7 +29,7 @@ module.exports = {
         let outputFile = `./images/${i}ResizedURL.${URLs[i].type}`;
 
         sharp(inputFile)
-          .resize({ height: 1080, width: 1920 })
+          .resize({ height: 1080, width: 1920, fit: 'contain'})
           .toFile(outputFile)
           .then(function (newFileInfo) {
             // newFileInfo holds the output file properties
