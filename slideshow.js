@@ -5,11 +5,9 @@ const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
 
-const sharp = require("sharp");
 module.exports = {
-  create(URLs, limit) {
+  create(images) {
     console.log("creating video file...");
-    var images = [];
     var videoOptions = {
       fps: 25,
       loop: 5, // seconds
@@ -23,28 +21,10 @@ module.exports = {
       format: "mp4",
       pixelFormat: "yuv420p",
     };
-    for (var i = 0; i < limit; i++) {
-      if (URLs[i]) {
-        let inputFile = `./images/${i}URL.${URLs[i].type}`;
-        let outputFile = `./images/${i}ResizedURL.${URLs[i].type}`;
-
-        sharp(inputFile)
-          .resize({ height: 1080, width: 1920, fit: 'contain'})
-          .toFile(outputFile)
-          .then(function (newFileInfo) {
-            // newFileInfo holds the output file properties
-            console.log("File #"+i+"Succeded out of #"+URLs.length);
-          })
-          .catch(function (err) {
-            console.log(err);
-            console.log(inputFile);
-          });
-        images.push(outputFile);
-      }
-    }
+    
     videoShow(images, videoOptions)
       .audio("song.mp3")
-      .save("video.mp4")
+      .save("video2.mp4")
       .on("start", function (command) {
         console.log("ffmpeg process started:", command);
       })
