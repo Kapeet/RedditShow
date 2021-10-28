@@ -4,10 +4,12 @@ const ffprobePath = require("@ffprobe-installer/ffprobe").path;
 const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
+const fs = require('fs');
+
 
 module.exports = {
   create(images) {
-    console.log("creating video file...");
+    console.log("creating video file... images length:"+images.length);
     var videoOptions = {
       fps: 25,
       loop: 5, // seconds
@@ -21,7 +23,8 @@ module.exports = {
       format: "mp4",
       pixelFormat: "yuv420p",
     };
-    
+
+
     videoShow(images, videoOptions)
       .audio("song.mp3")
       .save("video2.mp4")
