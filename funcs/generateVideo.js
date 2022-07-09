@@ -27,21 +27,24 @@ const VIDEO_OPTIONS = {
   
 function generateVideo(){
 	const images = (fs.readdirSync(FILE_PATH, (e, files) => files)).map(image => `${FILE_PATH}\\${image}`)
-
-	videoShow(images, VIDEO_OPTIONS)
-	.save('video.mp4')
-	.on('start', function (command) {
-		console.log('ffmpeg process started:', command)
-	})
-	.on('progress', progress => console.log("progress: ",progress))
-	.on('error', function (err, stdout, stderr) {
-		console.error('Error:', err)
-		console.error('ffmpeg stdout:', stdout)
-		console.error('ffmpeg stderr:', stderr)
-	})
-	.on('end', function (output) {
-		console.log('Video created in:', output)
-	});
+	
+	//wait a bit so videoShow doesn't freak out if a file is missing.
+	setTimeout(() =>{
+		videoShow(images, VIDEO_OPTIONS)
+		.save('video.mp4')
+		.on('start', command => {
+			console.log('ffmpeg process started:', command)
+		})
+		.on('progress', progress => console.log(`progress: ${Math.floor(progress.percent)}%`,))
+		.on('error',  (err, stdout, stderr) => {
+			console.error('Error:', err)
+			console.error('ffmpeg stdout:', stdout)
+			console.error('ffmpeg stderr:', stderr)
+		})
+		.on('end', function (output) {
+			console.log('Video created in:', output)
+		});
+	} ,250)
 }
 
 
