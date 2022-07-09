@@ -1,0 +1,31 @@
+{
+  "name": "redditshow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kapeet/RedditShow.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kapeet/RedditShow/issues"
+  },
+  "homepage": "https://github.com/Kapeet/RedditShow#readme",
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^1.4.1",
+    "axios": "^0.27.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "node-fetch": "^3.2.6",
+    "sharp": "^0.30.7",
+    "videoshow": "^0.1.12"
+  },
+  "devDependencies": {
+    "eslint": "^8.19.0"
+  }
+}
