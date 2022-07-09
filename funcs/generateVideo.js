@@ -1,6 +1,3 @@
-const downloadImagesFromURLs = require("./funcs/fsPostWriter");
-const fetchImagesFrom  = require("./funcs/redditFetch");
-const FILE_PATH = './images'
 
 const fs = require('fs');
 const sharp = require('sharp')
@@ -13,29 +10,37 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath)
 
 
-async function main(){
-
-	const URLs = await fetchImagesFrom('Berserk',10);
-	console.log({URLs})
-	await downloadImagesFromURLs(URLs, FILE_PATH);
-	
-	
+const VIDEO_OPTIONS = {
+	fps: 25,
+	loop: 5, // seconds
+	transition: true,
+	transitionDuration: 1, // seconds
+	videoBitrate: 1024,
+	videoCodec: 'libx264',
+	size: '640x?',
+	audioBitrate: '128k',
+	audioChannels: 2,
+	format: 'mp4',
+	pixelFormat: 'yuv420p'
+  };
+  const FILE_PATH = './images'
+  
+async function generateVideo(){
 	const images = []
 	fs.readdir(FILE_PATH, (err, files) => {
 		if (err) throw err;
 		files.forEach(async file => {
 			if (!file) return;
 			
-			const inputFile = `C:/Users/Amogus/Desktop/RedditShow/images/${file}`;
-			const outputFile = `C:/Users/Amogus/Desktop/RedditShow/images/Resized${file}`;
+			const inputFile = `${FILE_PATH}/${file}`;
+			const outputFile = `${FILE_PATH}/Resized${file}`;
 			console.log({file, outputFile})
 			try {
-				const input = await sharp(inputFile).resize({ height: 1080, width: 1920 }).toFile(outputFile);
-				console.log(input)
+				await sharp(inputFile).resize({ height: 1080, width: 1920 }).toFile(outputFile);
 				images.push(outputFile)
 			}
 			catch (err) {
-				console.log('sharp error',{err, file});
+				console.log(err);
 				
 			}
 		})	
@@ -56,4 +61,6 @@ async function main(){
 	// 	console.log('Video created in:', output)
 	// })
 }
-main();
+
+
+module.exports = generateVideo;

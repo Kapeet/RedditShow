@@ -24,7 +24,7 @@ async function fetchImagesFrom(subredditname, limit) {
 	//return the array with all the URLs
 	return URLs.filter(Boolean);
     
-  };
+  }
 
 
 function getImageFormat(url) {
@@ -66,7 +66,7 @@ async function resolveGalleryImage(url) {
         const fetchedImageId = json.data.children[0].data.gallery_data.items[0].media_id;
       
         //use the id to figure out the image format
-        const imageMIMEType = (response.data.children[0].data.media_metadata[fetchedImageId]).m;
+        const imageMIMEType = (json.data.children[0].data.media_metadata[fetchedImageId]).m;q
         const imageFormat = getImageFormat(imageMIMEType);
         
         return `https://i.redd.it/${fetchedImageId}.${imageFormat}`;

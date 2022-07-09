@@ -1,17 +1,29 @@
 const fs = require('fs');
 const client = require('https');
 
-const FILE_PATH = './images'
-async function downloadImagesFromURLs(URLs = [  'https://i.redd.it/xcapm5mbvg071.png']) {
+async function downloadImagesFromURLs(URLs = [], FILE_PATH) {
 	if (!URLs.length) throw new Error('No URLs provided to write')
 	
-	URLs.forEach(url => {
+	removePreviousImagesFromFolder(FILE_PATH);
+
+	URLs.forEach((url, index) => {
 		const imageFileExtension = url.split('.')[url.split('.').length - 1];
-		console.log(imageFileExtension)
 		const imageDownloadPath = `${FILE_PATH}/${index}.${imageFileExtension}`
 		downloadImage(url, imageDownloadPath);
 	})
 
+}
+
+function removePreviousImagesFromFolder(dirname){
+	fs.readdir(dirname, (err, files) => {
+		if (err) throw err;
+		files.forEach(file => {
+			const fileUrl = `${dirname}/${file}`
+			fs.unlink(fileUrl, err => {
+			  if (err) throw err;
+			});
+		})
+	  });
 }
 
 
