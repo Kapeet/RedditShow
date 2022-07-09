@@ -23,43 +23,25 @@ const VIDEO_OPTIONS = {
 	format: 'mp4',
 	pixelFormat: 'yuv420p'
   };
-  const FILE_PATH = './images'
+  const FILE_PATH = `${process.cwd()}\\images`
   
-async function generateVideo(){
-	const images = []
-	fs.readdir(FILE_PATH, (err, files) => {
-		if (err) throw err;
-		files.forEach(async file => {
-			if (!file) return;
-			
-			const inputFile = `${FILE_PATH}/${file}`;
-			const outputFile = `${FILE_PATH}/Resized${file}`;
-			console.log({file, outputFile})
-			try {
-				await sharp(inputFile).resize({ height: 1080, width: 1920 }).toFile(outputFile);
-				images.push(outputFile)
-			}
-			catch (err) {
-				console.log(err);
-				
-			}
-		})	
+function generateVideo(){
+	const images = (fs.readdirSync(FILE_PATH, (e, files) => files)).map(image => `${FILE_PATH}\\${image}`)
+
+	videoShow(images, VIDEO_OPTIONS)
+	.save('video.mp4')
+	.on('start', function (command) {
+		console.log('ffmpeg process started:', command)
+	})
+	.on('progress', progress => console.log("progress: ",progress))
+	.on('error', function (err, stdout, stderr) {
+		console.error('Error:', err)
+		console.error('ffmpeg stdout:', stdout)
+		console.error('ffmpeg stderr:', stderr)
+	})
+	.on('end', function (output) {
+		console.log('Video created in:', output)
 	});
-	console.log({images})
-	fs.readdir(FILE_PATH, (e, f) => console.log(f))
-	// videoShow(images, VIDEO_OPTIONS)
-	// .save('video.mp4')
-	// .on('start', function (command) {
-	// 	console.log('ffmpeg process started:', command)
-	// })
-	// .on('error', function (err, stdout, stderr) {
-	// 	console.error('Error:', err)
-	// 	console.error('ffmpeg stdout:', stdout)
-	// 	console.error('ffmpeg stderr:', stderr)
-	// })
-	// .on('end', function (output) {
-	// 	console.log('Video created in:', output)
-	// })
 }
 
 
