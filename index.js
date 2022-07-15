@@ -7,7 +7,7 @@ const generateVideo = require("./funcs/generateVideo");
 
 async function main(){
 
-	const URLs = await fetchImagesFrom('Berserk',20);
+	const URLs = await fetchImagesFrom('food',1);
 	console.log({URLs})
 	await downloadImagesFromURLs(URLs, FILE_PATH);
 	

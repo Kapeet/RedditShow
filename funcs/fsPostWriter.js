@@ -2,16 +2,18 @@ const fs = require('fs');
 const client = require('https');
 const sharp = require('sharp');
 
-async function downloadImagesFromURLs(URLs = [], FILE_PATH) {
-	if (!URLs.length) throw new Error('No URLs provided to write')
+async function downloadImagesFromURLs(Images = [], FILE_PATH) {
+	if (!Images.length) throw new Error('No URLs provided to write')
 	
 	removePreviousImagesFromFolder(FILE_PATH);
 
-	URLs.forEach((url, index) => {
+	Images.forEach(image => {
+		const {url} = image;
+		const title =  encodeURIComponent(image.title);
 		const imageFileExtension = url.split('.')[url.split('.').length - 1];
-		const imageDownloadPath = `${FILE_PATH}/${index}.${imageFileExtension}`
-		const outputFile = `${FILE_PATH}/${index}Resized.${imageFileExtension}`
-		downloadAndResizeImage(url, imageDownloadPath, outputFile);
+		const imageDownloadPath = `${FILE_PATH}/${title}.${imageFileExtension}`
+		const outputFile = `${FILE_PATH}/${title}Resized.${imageFileExtension}`
+		downloadAndResizeImage(image.url, imageDownloadPath, outputFile);
 	})
 
 }
@@ -30,6 +32,7 @@ function removePreviousImagesFromFolder(dirname){
 
 
 function downloadAndResizeImage(url, InputFile, resizedImagePath) {
+	console.log({url, InputFile, resizedImagePath});
     client.get(url, (res) => {
         res.pipe(fs.createWriteStream(InputFile))
 		.on('error', err => {
