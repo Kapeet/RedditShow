@@ -1,23 +1,24 @@
 const { default: axios } = require('axios');
+var Scraper = require('images-scraper');
 
 const FETCH_URL = `https://www.reddit.com/r/{subredditname}/top.json?sort=top&t=all&limit={limit}&q=cat&nsfw=1&include_over_18=on`;
 
-async function fetchImagesFrom(subredditname, limit) {
-    const url = FETCH_URL.replace('{subredditname}', subredditname).replace('{limit}',limit);
+async function fetchImagesFrom(query, limit) {
 
-	const response = await axios.get(url)
-	const posts =  response.data.data.children;
-	const URLs = posts.map((post,index) => {
-		const url = post.data.url;
-		if (!url) return;
-		
-		if (url.includes("/gallery/")) {//check if url is a gallery link - figure out what the direct url is
-			return resolveGalleryImage(url);
-		}
-		if (!url) return
-		//Validate that the URL we recieved is a direct link to an image file.
-		if (!isUrlValid(url)) return;
-		console.log(`url #${index}: `,url)
+  const google = new Scraper({
+    puppeteer: {
+      headless: false,
+    },
+  });
+  
+  const results = await google.scrape(query, limit);
+  console.log('results', results);
+  //   const url = FETCH_URL.replace('{subredditname}', subredditname).replace('{limit}',limit);
+	// const posts =  response.data.data.children;
+	const URLs = results.map(res => {
+    const url = res.url
+		if (!url || !isUrlValid(url)) return;
+
 		return url;
 		
 	});
@@ -48,30 +49,5 @@ const isUrlValid = url => url && url.includes('https') && !url.includes('/commen
                   url.endsWith('.jpeg') ||
                   url.endsWith('.bmp')
                 )
-
-/**
- * This function takes in a reddit gallery URL and finds the actual URL of the image
- * The reason i use this function is because reddit gallery links are a bit problematic
- * and you need to do some weird stuff to find the link of a raw image file from a gallery link.
- * @param {string} url 
- */
-async function resolveGalleryImage(url) {
-  const rawImageId = (url.split('/'))[4]
-  if (!rawImageId) return;
- 
-  const res = await axios.get(`https://www.reddit.com/comments/${rawImageId}.json`)
-  
-  const json = res.data;
-  if (!json) return;
-        const fetchedImageId = json.data.children[0].data.gallery_data.items[0].media_id;
-      
-        //use the id to figure out the image format
-        const imageMIMEType = (json.data.children[0].data.media_metadata[fetchedImageId]).m;q
-        const imageFormat = getImageFormat(imageMIMEType);
-        
-        return `https://i.redd.it/${fetchedImageId}.${imageFormat}`;
-      
-}
-
 
 module.exports = fetchImagesFrom;
