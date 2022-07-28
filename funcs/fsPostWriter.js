@@ -13,10 +13,10 @@ async function downloadImagesFromURLs(Images = [], FILE_PATH) {
 		const imageFileExtension = url.split('.')[url.split('.').length - 1];
 		
 		if (!imageFileExtension || !title || !url) return;
-
-		const imageDownloadPath = `${FILE_PATH}/${title}.${imageFileExtension}`
+		
 		const outputFile = `${FILE_PATH}/${title}Resized.${imageFileExtension}`
-		await downloadAndResizeImage(image.url, imageDownloadPath, outputFile);
+
+		await downloadAndResizeImage(image.url, outputFile);
 	})
 
 }
@@ -38,40 +38,31 @@ async function removePreviousImagesFromFolder(dirname){
 }
 
 
-async function downloadAndResizeImage(url, InputFile, resizedImagePath) {
+async function downloadAndResizeImage(url, resizedImagePath) {
 
     client.get(url, (res) => {
-        res.pipe(fs.createWriteStream(InputFile))
-		.on('error', err => {
-			if (err) console.log('fs writestream error: ',err);
-			return;
-		})
-		.once('close', () => {
-			sharp(InputFile)
+		const data = []
+
+		res.on('data', function(chunk) {
+			data.push(chunk);
+		}).on('end', function() {
+			const buffer = Buffer.concat(data);
+			sharp(buffer)
 			.resize({ height: 1080, width: 1920, fit: 'contain'})
 			.toFile(resizedImagePath)
-			.then(() => {
-		
-			//Remove original unresized file
-			fs.unlinkSync(InputFile, (err) => {
-				if (err) console.warn('unlink error: ',err)
-				return;
-				});
-		
-			})
 			.catch(err => console.log('sharp error: ',err));
 		});
-    }).on('error', err => generateGetError(err, InputFile));
+    }).on('error', err => generateGetError(err, url));
 
 
 	
 }
 
-function generateGetError(err, InputFile) {
+function generateGetError(err, url) {
 	if (err.code) {
 		console.log({
 			error: err.code,
-			file: InputFile
+			url,
 		})
 	}
 }
