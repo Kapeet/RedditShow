@@ -5,12 +5,13 @@ const FILE_PATH = './images'
 
 const generateVideo = require("./funcs/generateVideo");
 
-async function main(){
+async function main(limit = 5){
 
-	const URLs = await fetchImagesFrom('food',1);
-	console.log({URLs})
+	const URLs = await fetchImagesFrom('food',limit);
 	await downloadImagesFromURLs(URLs, FILE_PATH);
+	console.log('images successfully downloaded')
 	
 	generateVideo();
+	console.log('done')
 }
 main();
