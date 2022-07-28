@@ -26,8 +26,7 @@ const VIDEO_OPTIONS = {
   const FILE_PATH = `${process.cwd()}\\images`
   
 function generateVideo(){
-	const images = (fs.readdirSync(FILE_PATH, (e, files) => files)).map(image => `${FILE_PATH}\\${image}`)
-	
+	const images = (fs.readdirSync(FILE_PATH, (e, files) => files)).map(image => `${FILE_PATH}\\${image}`).filter(img => img.includes('Resized'))
 	//wait a bit so videoShow doesn't freak out if a file is missing.
 	setTimeout(() =>{
 		videoShow(images, VIDEO_OPTIONS)
@@ -37,14 +36,14 @@ function generateVideo(){
 		})
 		.on('progress', progress => console.log(`progress: ${Math.floor(progress.percent)}%`,))
 		.on('error',  (err, stdout, stderr) => {
-			console.error('Error:', err)
+			console.error(err)
 			console.error('ffmpeg stdout:', stdout)
 			console.error('ffmpeg stderr:', stderr)
 		})
 		.on('end', function (output) {
 			console.log('Video created in:', output)
 		});
-	} ,250)
+	} ,2500)
 }
 
 

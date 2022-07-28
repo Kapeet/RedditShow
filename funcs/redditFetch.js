@@ -1,8 +1,6 @@
 const { default: axios } = require('axios');
 var Scraper = require('images-scraper');
 
-const FETCH_URL = `https://www.reddit.com/r/{subredditname}/top.json?sort=top&t=all&limit={limit}&q=cat&nsfw=1&include_over_18=on`;
-
 async function fetchImagesFrom(query, limit) {
 
   const google = new Scraper({
@@ -11,8 +9,17 @@ async function fetchImagesFrom(query, limit) {
     },
   });
   
-  const results = await google.scrape(query, limit);
-  //   const url = FETCH_URL.replace('{subredditname}', subredditname).replace('{limit}',limit);
+  const results = []
+  try {
+    results.push(...await google.scrape(query, limit));
+  }
+  catch (err) {
+    console.log('results error', err)
+  }
+  if (!results.length) return;
+  
+  console.log({length: results.length})
+  //   const url = FETCH_URasL.replace('{subredditname}', subredditname).replace('{limit}',limit);
 	// const posts =  response.data.data.children;
 	const images = results.map(res => {
     const {url, title} = res;
@@ -26,7 +33,7 @@ async function fetchImagesFrom(query, limit) {
     
   }
   
-const isUrlValid = url => url && url.includes('https') && !url.includes('/comments/') && !url.includes('v.redd.it') && 
+const isUrlValid = url => url && url.includes('https') && 
                 (
                   url.endsWith('.png') ||
                   url.endsWith('.jpg') ||
